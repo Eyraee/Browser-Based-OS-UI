@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TusharOS | Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div id="top-bar" class="glass-dark">
+    <div class="top-left">
+      <span class="apple-logo" onclick="toggleMenu('apple-menu')"></span>
+      <span class="active-app-name">Finder</span>
+    </div>
+    <div class="top-right">
+      <span class="status-icon" onclick="openWindow('window-settings')">⚙️</span>
+      <span class="status-icon">📶</span>
+      <span class="status-icon">🔋 100%</span>
+      <span id="clock">12:00 PM</span>
+    </div>
+  </div>
+
+  <div id="apple-menu" class="glass popup-menu hidden">
+    <div class="menu-item" onclick="openWindow('window-about')">About This Mac</div>
+    <div class="menu-item" onclick="openWindow('window-settings')">System Preferences...</div>
+    <div class="menu-divider"></div>
+    <div class="menu-item" onclick="resetState()">Restart OS...</div>
+  </div>
+
+  <div id="desktop">
+    
+    <div class="window glass" id="window-about" data-x="100" data-y="100" data-w="450" data-h="300" style="display: none;">
+      <div class="window-header" id="window-about-header">
+        <div class="mac-controls">
+          <div class="mac-btn close" onclick="closeWindow('window-about')"></div>
+          <div class="mac-btn minimize" onclick="closeWindow('window-about')"></div>
+          <div class="mac-btn maximize" onclick="maximizeWindow('window-about')"></div>
+        </div>
+        <span class="window-title">About Me</span>
+      </div>
+      <div class="window-content">
+        <h2>Hi, I'm Tushar 👋</h2><br>
+        <p>I build aesthetic, interactive web experiences focusing on clean UI, CSS glassmorphism, and Three.js integrations.</p>
+      </div>
+      <div class="resizer"></div>
+    </div>
+
+    <div class="window" id="window-terminal" data-x="150" data-y="150" data-w="500" data-h="350" style="display: none; background: rgba(0,0,0,0.85); border: 1px solid #333;">
+      <div class="window-header" id="window-terminal-header" style="background: #222; border-bottom: 1px solid #111;">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-terminal')"></div></div>
+        <span class="window-title" style="color: #fff;">tushar@macbook:~</span>
+      </div>
+      <div class="window-content terminal-content" onclick="document.getElementById('term-input').focus()">
+        <div id="term-output">Last login: <span id="term-time"></span> on ttys000<br>Type 'help' to see available commands.<br></div>
+        <div class="term-input-line"><span class="term-prompt">tushar@macbook ~ %</span><input type="text" id="term-input" autocomplete="off" spellcheck="false"></div>
+      </div>
+    </div>
+
+    <div class="window glass-dark" id="window-calc" data-x="700" data-y="200" data-w="230" data-h="360" style="display: none;">
+      <div class="window-header" id="window-calc-header" style="border-bottom: none; background: transparent;">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-calc')"></div></div>
+      </div>
+      <div class="calc-display" id="calc-display">0</div>
+      <div class="calc-grid">
+        <button class="calc-btn func" onclick="calcAction('clear')">AC</button>
+        <button class="calc-btn func" onclick="calcAction('sign')">+/-</button>
+        <button class="calc-btn func" onclick="calcAction('%')">%</button>
+        <button class="calc-btn op" onclick="calcAction('/')">÷</button>
+        <button class="calc-btn num" onclick="calcAction('7')">7</button>
+        <button class="calc-btn num" onclick="calcAction('8')">8</button>
+        <button class="calc-btn num" onclick="calcAction('9')">9</button>
+        <button class="calc-btn op" onclick="calcAction('*')">×</button>
+        <button class="calc-btn num" onclick="calcAction('4')">4</button>
+        <button class="calc-btn num" onclick="calcAction('5')">5</button>
+        <button class="calc-btn num" onclick="calcAction('6')">6</button>
+        <button class="calc-btn op" onclick="calcAction('-')">-</button>
+        <button class="calc-btn num" onclick="calcAction('1')">1</button>
+        <button class="calc-btn num" onclick="calcAction('2')">2</button>
+        <button class="calc-btn num" onclick="calcAction('3')">3</button>
+        <button class="calc-btn op" onclick="calcAction('+')">+</button>
+        <button class="calc-btn num zero" onclick="calcAction('0')">0</button>
+        <button class="calc-btn num" onclick="calcAction('.')">.</button>
+        <button class="calc-btn op" onclick="calcAction('=')">=</button>
+      </div>
+    </div>
+
+    <div class="window glass" id="window-ttt" data-x="400" data-y="200" data-w="300" data-h="360" style="display: none;">
+      <div class="window-header" id="window-ttt-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-ttt')"></div></div>
+        <span class="window-title">Tic Tac Toe</span>
+      </div>
+      <div class="window-content game-container">
+        <div class="game-status" id="ttt-status">Player X's Turn</div>
+        <div class="ttt-board" id="ttt-board"></div>
+        <button class="game-btn" onclick="initTTT()">Restart Game</button>
+      </div>
+    </div>
+
+    <div class="window glass-dark" id="window-c4" data-x="350" data-y="100" data-w="450" data-h="480" style="display: none;">
+      <div class="window-header" id="window-c4-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-c4')"></div></div>
+        <span class="window-title">Connect Four</span>
+      </div>
+      <div class="window-content game-container">
+        <div class="game-status" id="c4-status">Red's Turn</div>
+        <div class="c4-board" id="c4-board"></div>
+        <button class="game-btn" onclick="initC4()">Restart</button>
+      </div>
+    </div>
+
+    <div class="window glass" id="window-studio" data-x="200" data-y="100" data-w="500" data-h="400" style="display: none;">
+      <div class="window-header" id="window-studio-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-studio')"></div></div>
+        <span class="window-title">Art Studio</span>
+      </div>
+      <div class="studio-toolbar">
+        <input type="color" id="studio-color" value="#ffffff">
+        <input type="range" id="studio-size" min="1" max="20" value="5">
+        <button class="game-btn" onclick="clearCanvas()">Clear</button>
+      </div>
+      <canvas id="studio-canvas" style="flex-grow: 1; background: transparent; cursor: crosshair; touch-action: none;"></canvas>
+      <div class="resizer" id="studio-resizer"></div>
+    </div>
+
+    <div class="window glass-dark" id="window-weather" data-x="600" data-y="50" data-w="280" data-h="200" style="display: none; border-radius: 24px;">
+      <div class="window-header" id="window-weather-header" style="border-bottom: none; background: transparent;">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-weather')"></div></div>
+      </div>
+      <div class="weather-content" id="weather-content">
+        <h2 id="w-city">Ahmedabad</h2>
+        <h1 id="w-temp">--°C</h1>
+        <p id="w-desc">Fetching data...</p>
+      </div>
+    </div>
+
+    <div class="window glass" id="window-tasks" data-x="300" data-y="150" data-w="600" data-h="450" style="display: none;">
+      <div class="window-header" id="window-tasks-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-tasks')"></div></div>
+        <span class="window-title">Tasks Board</span>
+      </div>
+      <div class="task-input-area">
+        <input type="text" id="new-task-input" placeholder="Enter a new task...">
+        <button class="game-btn" onclick="addTask()">Add Task</button>
+      </div>
+      <div class="kanban-board">
+        <div class="kanban-col" id="todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>To Do</h3>
+          <div class="task-card" draggable="true" ondragstart="drag(event)" id="task1">Design Portfolio <span class="del-btn" onclick="deleteTask('task1')">✕</span></div>
+        </div>
+        <div class="kanban-col" id="inprogress" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>In Progress</h3>
+        </div>
+        <div class="kanban-col" id="done" ondrop="drop(event)" ondragover="allowDrop(event)">
+          <h3>Done</h3>
+        </div>
+      </div>
+      <div class="resizer"></div>
+    </div>
+
+    <div class="window glass" id="window-3d" data-x="100" data-y="250" data-w="350" data-h="350" style="display: none;">
+      <div class="window-header" id="window-3d-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-3d')"></div></div>
+        <span class="window-title">3D Viewer</span>
+      </div>
+      <div class="viewer-container" id="viewer-container">
+        </div>
+      <div class="resizer"></div>
+    </div>
+
+    <div class="window glass" id="window-settings" data-x="50" data-y="50" data-w="350" data-h="200" style="display: none;">
+      <div class="window-header" id="window-settings-header">
+        <div class="mac-controls"><div class="mac-btn close" onclick="closeWindow('window-settings')"></div></div>
+        <span class="window-title">System Settings</span>
+      </div>
+      <div class="window-content">
+        <div class="setting-row">
+          <span>Dark Mode (Canvas)</span>
+          <label class="switch"><input type="checkbox" id="theme-toggle" checked onchange="toggleTheme()"><span class="slider round"></span></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="dock-container">
+    <div id="dock" class="glass-dark">
+      <div class="dock-item" onclick="openWindow('window-about')" data-tooltip="About Me"><span class="dock-icon">👤</span></div>
+      <div class="dock-item" onclick="openWindow('window-terminal')" data-tooltip="Terminal"><span class="dock-icon">⌨️</span></div>
+      <div class="dock-item" onclick="openWindow('window-calc')" data-tooltip="Calculator"><span class="dock-icon">🧮</span></div>
+      <div class="dock-divider"></div>
+      <div class="dock-item" onclick="openWindow('window-ttt')" data-tooltip="Tic Tac Toe"><span class="dock-icon">❌</span></div>
+      <div class="dock-item" onclick="openWindow('window-c4')" data-tooltip="Connect 4"><span class="dock-icon">🔴</span></div>
+      <div class="dock-divider"></div>
+      <div class="dock-item" onclick="openWindow('window-studio')" data-tooltip="Studio"><span class="dock-icon">🎨</span></div>
+      <div class="dock-item" onclick="openWindow('window-weather')" data-tooltip="Weather"><span class="dock-icon">⛅</span></div>
+      <div class="dock-item" onclick="openWindow('window-tasks')" data-tooltip="Tasks"><span class="dock-icon">✅</span></div>
+      <div class="dock-item" onclick="openWindow('window-3d')" data-tooltip="3D Viewer"><span class="dock-icon">🧊</span></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

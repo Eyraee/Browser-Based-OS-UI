@@ -1,0 +1,100 @@
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: '-apple-system', 'BlinkMacSystemFont', sans-serif; user-select: none; }
+body { height: 100vh; width: 100vw; overflow: hidden; background-color: #050505; display: flex; flex-direction: column; }
+#bg-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+
+.glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 15px 35px rgba(0,0,0,0.4); color: #fff; }
+.glass-dark { background: rgba(10, 10, 10, 0.6); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; }
+
+#top-bar { height: 30px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; font-size: 13px; font-weight: 500; z-index: 10000; position: fixed; top: 0; width: 100%; box-shadow: 0 1px 5px rgba(0,0,0,0.2); }
+.top-left, .top-right { display: flex; align-items: center; gap: 15px; }
+.apple-logo { font-size: 16px; cursor: pointer; padding: 0 5px; }
+.active-app-name { font-weight: 700; }
+.status-icon { cursor: pointer; padding: 0 5px; }
+
+.popup-menu { position: absolute; top: 35px; left: 10px; width: 220px; border-radius: 8px; padding: 8px 0; z-index: 10001; display: flex; flex-direction: column; transition: opacity 0.2s; }
+.popup-menu.hidden { opacity: 0; pointer-events: none; }
+.menu-item { padding: 8px 15px; font-size: 13px; cursor: pointer; transition: background 0.1s; }
+.menu-item:hover { background: #007aff; color: white; }
+.menu-divider { height: 1px; background: rgba(255, 255, 255, 0.1); margin: 5px 0; }
+
+#desktop { flex-grow: 1; position: relative; margin-top: 30px; height: calc(100vh - 30px); }
+.window { position: absolute; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; min-width: 200px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.window-header { padding: 12px 16px; display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); cursor: grab; position: relative; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.window-title { font-weight: 600; font-size: 13px; position: absolute; left: 50%; transform: translateX(-50%); }
+.mac-controls { display: flex; gap: 8px; z-index: 2; }
+.mac-btn { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+.mac-btn.close { background-color: #ff5f56; }
+.mac-btn.minimize { background-color: #ffbd2e; }
+.mac-btn.maximize { background-color: #27c93f; }
+.window-content { padding: 24px; flex-grow: 1; user-select: text; overflow-y: auto; }
+.resizer { position: absolute; bottom: 0; right: 0; width: 15px; height: 15px; cursor: se-resize; z-index: 10; }
+
+/* Terminal */
+.terminal-content { font-family: 'Courier New', Courier, monospace; font-size: 14px; color: #4af626; padding: 10px; }
+.term-input-line { display: flex; gap: 10px; margin-top: 5px; }
+#term-input { background: transparent; border: none; color: #4af626; font-family: 'Courier New', Courier, monospace; outline: none; flex-grow: 1; }
+
+/* Calculator */
+.calc-display { padding: 20px 15px 10px; font-size: 40px; text-align: right; color: white; font-weight: 300; overflow: hidden; }
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(5, 1fr); gap: 1px; padding: 10px; background: rgba(0,0,0,0.2); flex-grow: 1; }
+.calc-btn { border: none; font-size: 18px; cursor: pointer; border-radius: 50%; margin: 2px; transition: filter 0.1s; display: flex; justify-content: center; align-items: center; }
+.calc-btn:active { filter: brightness(1.5); }
+.calc-btn.num { background: #333333; color: white; }
+.calc-btn.func { background: #a5a5a5; color: black; }
+.calc-btn.op { background: #ff9f0a; color: white; }
+.calc-btn.zero { grid-column: span 2; border-radius: 25px; justify-content: flex-start; padding-left: 20px; }
+
+/* Games */
+.game-container { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.game-status { font-size: 16px; font-weight: bold; margin-bottom: 10px; }
+.game-btn { padding: 8px 16px; background: #007aff; border: none; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; }
+.game-btn:hover { background: #005bb5; }
+
+.ttt-board { display: grid; grid-template-columns: repeat(3, 80px); grid-template-rows: repeat(3, 80px); gap: 5px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 8px; }
+.ttt-cell { background: rgba(0,0,0,0.5); border-radius: 4px; display: flex; justify-content: center; align-items: center; font-size: 40px; font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; }
+.ttt-cell:hover { background: rgba(0,0,0,0.3); }
+
+.c4-board { display: grid; grid-template-columns: repeat(7, 50px); grid-template-rows: repeat(6, 50px); gap: 5px; background: #005bb5; padding: 10px; border-radius: 12px; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+.c4-cell { background: #111; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.3s; box-shadow: inset 0 5px 10px rgba(0,0,0,0.8); }
+.c4-cell.red { background: #ff3b30; box-shadow: inset 0 -3px 8px rgba(0,0,0,0.4); }
+.c4-cell.yellow { background: #ffcc00; box-shadow: inset 0 -3px 8px rgba(0,0,0,0.4); }
+
+/* Studio */
+.studio-toolbar { padding: 10px; background: rgba(0,0,0,0.2); display: flex; gap: 15px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+/* Weather */
+.weather-content { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+#w-city { font-size: 18px; font-weight: 500; opacity: 0.8; }
+#w-temp { font-size: 48px; font-weight: 300; margin: 10px 0; }
+#w-desc { font-size: 14px; font-weight: 500; text-transform: capitalize; }
+
+/* Tasks Kanban */
+.task-input-area { display: flex; gap: 10px; padding: 15px 15px 0 15px; }
+.task-input-area input { flex-grow: 1; padding: 8px 12px; border-radius: 6px; border: none; outline: none; background: rgba(255,255,255,0.2); color: white; }
+.task-input-area input::placeholder { color: rgba(255,255,255,0.6); }
+.kanban-board { display: flex; height: calc(100% - 90px); padding: 15px; gap: 15px; overflow-x: auto; }
+.kanban-col { flex: 1; min-width: 150px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+.kanban-col h3 { font-size: 14px; text-align: center; color: rgba(255,255,255,0.6); padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+.task-card { position: relative; background: rgba(255,255,255,0.15); padding: 12px; border-radius: 6px; font-size: 13px; cursor: grab; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.1s; padding-right: 30px; }
+.task-card:active { cursor: grabbing; transform: scale(0.95); opacity: 0.8; }
+.del-btn { position: absolute; right: 10px; top: 10px; color: #ff5f56; cursor: pointer; font-weight: bold; opacity: 0; transition: opacity 0.2s; }
+.task-card:hover .del-btn { opacity: 1; }
+
+/* 3D Viewer */
+.viewer-container { width: 100%; height: calc(100% - 40px); display: flex; justify-content: center; align-items: center; overflow: hidden; }
+
+/* Settings */
+.setting-row { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #2196F3; }
+input:checked + .slider:before { transform: translateX(20px); }
+
+/* Dock */
+#dock-container { position: fixed; bottom: 10px; width: 100%; display: flex; justify-content: center; z-index: 10000; }
+#dock { display: flex; gap: 8px; padding: 10px; border-radius: 24px; align-items: center; }
+.dock-item { width: 45px; height: 45px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; transition: all 0.2s; position: relative; }
+.dock-item:hover { transform: scale(1.3) translateY(-10px); }
+.dock-divider { width: 1px; height: 35px; background: rgba(255,255,255,0.2); margin: 0 5px; }
