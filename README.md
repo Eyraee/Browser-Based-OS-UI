@@ -8,7 +8,7 @@ Hi, I'm **Tushar Shah**. I'm B.Tech IT student, a digital commission artist, and
 
 Everything you see here—the physics, the window rendering, the 3D backgrounds, the state management—was built from scratch without bulky frameworks. Just raw DOM manipulation and pure logic.
 
-🔗 **[Boot Up TusharOS Live Here](https://Eyraee.github.io/browser-based-os-ui/)**
+🔗 **[Boot Up TusharOS Live Here](https://eyraee.github.io/Browser-Based-OS-UI/)**
 
 ---
 
